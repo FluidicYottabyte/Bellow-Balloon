@@ -24,6 +24,8 @@ EvrySens = PHTCSens.PHTGSensor(tca[2])
 # After initial setup, can just use sensors as normal.
 while True:
     print("Pressure: "+str(PresSens.readPres()))
+    print("Altitude: "+str(EvrySens.readAlt()))
     print("Temperature: "+str(PresSens.readTemp()))
     print("Humidity: "+str(EvrySens.readHumid()))
+    print("Airquality: "+str(EvrySens.readGas()))
     time.sleep(0.1)
