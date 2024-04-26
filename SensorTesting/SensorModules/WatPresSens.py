@@ -5,10 +5,10 @@ import time
 import board
 import adafruit_lps35hw
 
-class PressureSensor:
+class TPSensor:
     
     def __init__(self, bus):
-        print("Pressure sensor called.")
+        print("Waterproof Temp + Pressure sensor called.")
     
         self.lps = adafruit_lps35hw.LPS35HW(bus)
 

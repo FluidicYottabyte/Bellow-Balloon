@@ -6,6 +6,7 @@
 import time
 import board
 from SensorModules import WatPresSens
+from SensorModules import PHTCSens
 
 #Multiplexor Libary
 import adafruit_tca9548a
@@ -17,10 +18,12 @@ i2c = board.I2C()  # uses board.SCL and board.SDA
 tca = adafruit_tca9548a.TCA9548A(i2c)
 
 # Define the pressure sensor at the 3rd I2C bus
-PresSens = WatPresSens.PressureSensor(tca[3])
+PresSens = WatPresSens.TPSensor(tca[3])
+EvrySens = PHTCSens.PHTGSensor(tca[2])
 
 # After initial setup, can just use sensors as normal.
 while True:
-    print("Pressure: "+str(PresSens.readTemp()))
-    print("Temperature: "+str(PresSens.readPres()))
+    print("Pressure: "+str(PresSens.readPres()))
+    print("Temperature: "+str(PresSens.readTemp()))
+    print("Humidity: "+str(EvrySens.readHumid()))
     time.sleep(0.1)
