@@ -28,6 +28,7 @@ EvrySens = PHTCSens.PHTGSensor(tca[2])
     print("Humidity: "+str(EvrySens.readHumid()))
     time.sleep(0.1) """
 
+# Create a class to read sensor information
 class Multiplexor:
 
     def __init__(self):
