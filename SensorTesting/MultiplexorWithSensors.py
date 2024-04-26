@@ -22,8 +22,28 @@ PresSens = WatPresSens.TPSensor(tca[3])
 EvrySens = PHTCSens.PHTGSensor(tca[2])
 
 # After initial setup, can just use sensors as normal.
-while True:
+""" while True:
     print("Pressure: "+str(PresSens.readPres()))
     print("Temperature: "+str(PresSens.readTemp()))
     print("Humidity: "+str(EvrySens.readHumid()))
-    time.sleep(0.1)
+    time.sleep(0.1) """
+
+class Multiplexor:
+
+    def __init__(self):
+        print("Multiplexor called.")
+
+        self.tca = adafruit_tca9548a.TCA9548A(i2c)
+
+    def avgTemp(self):
+        avg = (PresSens.readTemp() + EvrySens.readTemp()) / 2
+        return(avg)
+    
+    def readPres(self):
+        return(EvrySens.readPres())
+    
+    def altCheck(self):
+        if EvrySens.readAlt() >= 38000:
+            return(True)
+        else:
+            return(False)
