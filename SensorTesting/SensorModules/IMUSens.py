@@ -21,4 +21,10 @@ class IMU:
     def Orientation(self):
         return(self.sensor.euler)
     
+    def Accel(self):
+        return(self.sensor.linear_acceleration)
+    
+    def CurGrav(self):
+        return(self.sensor.gravity)
+    
     

@@ -25,15 +25,16 @@ rfm9x.tx_power = 23
 prev_packet = None
 
 while True:
-    """ packet = None
+    packet = rfm9x.receive()
     if packet is None:
         print("Awaiting packet")
+        time.sleep(.1)
     else:
         # Display the packet text and rssi
         prev_packet = packet
         packet_text = str(prev_packet, "utf-8")
         print(f'RX: {packet_text}')
-        time.sleep(1) """
+        time.sleep(1)
         
-    rfm9x.send(bytes("Test success\r\n","utf-8"))
-    time.sleep(1)
+    #rfm9x.send(bytes("Test success\r\n","utf-8"))
+    #time.sleep(1)

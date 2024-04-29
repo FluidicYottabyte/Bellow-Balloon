@@ -7,19 +7,25 @@ import time
 import board
 from SensorModules import WatPresSens
 from SensorModules import PHTCSens
+from SensorModules import IMUSens
 
 #Multiplexor Libary
 import adafruit_tca9548a
 
 # Create I2C bus as normal
 i2c = board.I2C()  # uses board.SCL and board.SDA
+i2c3 = board.I2C(board.SCL3,board.SDA3)
+
+"""^^^^^^^^^^^^^^FIGURE OUT HOW TO ACCESS I2C-3^^^^^^^^^^^^^"""
 
 # Create the TCA9548A object and give it the I2C bus
 tca = adafruit_tca9548a.TCA9548A(i2c)
 
 # Define the pressure sensor at the 3rd I2C bus
+
 PresSens = WatPresSens.TPSensor(tca[3])
 EvrySens = PHTCSens.PHTGSensor(tca[2])
+PosSens = IMUSens.IMU(i2c)
 
 # After initial setup, can just use sensors as normal.
 """ while True:
@@ -48,3 +54,9 @@ class Multiplexor:
             return(True)
         else:
             return(False)
+        
+    def getAccel(self):
+        return(PosSens.Accel())
+    
+    def gravity(self):
+        return(PosSens.CurGrav())
