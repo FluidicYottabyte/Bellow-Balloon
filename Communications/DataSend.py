@@ -16,6 +16,7 @@ from queue import PriorityQueue
 # Import the SSD1306 module.
 # Import the RFM9x radio module.
 import adafruit_rfm9x
+import binascii
 
 # Configure RFM9x LoRa Radio
 CS = DigitalInOut(board.CE1)
@@ -43,6 +44,11 @@ class Radio:
         
     def getQueue(self):
         return(outgoing)
+    
+    def encode(self, file):
+        with open(file, 'rb') as f:
+            content = f.read()
+        return(binascii.hexlify(content))
         
         
         
