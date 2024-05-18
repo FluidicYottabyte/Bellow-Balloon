@@ -20,7 +20,7 @@ print(os.path.dirname(os.path.dirname(os.path.dirname(path))))
 
 onPi = False
 
-if os.path.dirname(os.path.dirname(os.path.dirname(path))) == "home/":
+if os.path.dirname(os.path.dirname(os.path.dirname(path))) == "/home":
     print("on Pi")
     import busio
     from digitalio import DigitalInOut, Direction, Pull
@@ -83,6 +83,10 @@ class Radio:
             return True
         else:
             return False
+
+    def receive(self):
+        receivedInfo = Rad.receive(keep_listening=True,with_ack=True,timeout=5.0)
+        return(receivedInfo)
 
     #In the event of loss of contact, this function will run through all possible fixes
     
