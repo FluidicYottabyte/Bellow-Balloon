@@ -81,8 +81,10 @@ class Radio:
         if SizeStat:
             CurrTask = outgoing.get()
             print(CurrTask)
+            path = os.getcwd()
+            path = os.path.dirname(path)
         
-            with open(os.path.join(os.path.join(os.getcwd(), "Communications"),CurrTask), "rb") as image:
+            with open(os.path.join(os.path.join(path, "Communications"),CurrTask), "rb") as image:
                 f = image.read()
                 b = bytearray(f)
                 print(b)

@@ -22,7 +22,7 @@ def RadioControlSend():
     move = True
     while move:
         print("Acting radio...")
-        success = Radio.receive()
+        success = Radio.send()
         if success:
             print(success)
 
