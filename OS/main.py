@@ -5,6 +5,7 @@ import time
 import os
 
 path = os.getcwd()
+path = os.path.dirname(path)
 sys.path.insert(0, path)
 
 print(path)
