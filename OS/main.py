@@ -12,7 +12,7 @@ print(path)
 
 from Communications import DataSend
 
-Radio = DataSend.Radio()
+Radio = DataSend.Radio(True)
 
 Radio.getQueue()
 Radio.addQueue(1,"TestIMG1.jpg")

@@ -19,7 +19,7 @@ print(path)
 
 from Communications import DataSend
 
-Radio = DataSend.Radio()
+Radio = DataSend.Radio(False)
 
 
 
