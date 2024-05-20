@@ -53,12 +53,18 @@ from queue import PriorityQueue
 
 class Radio:
     
-    def __init__(self):
+    def __init__(self, Balloon):
         if onPi:
             print("Begin radio object")
             Rad.reset()
             Rad.spreading_factor = 6
             print("Valid bandwidth:"+str(Rad.bw_bins))
+            if Balloon:
+                Rad.node = 66
+                Rad.destination = 65
+            else:
+                Rad.node = 65
+                Rad.destination = 66
         
     def test(self):
         return(Rad.send_with_ack(b"TEST"))
@@ -85,7 +91,7 @@ class Radio:
             return False
 
     def receive(self):
-        receivedInfo = Rad.receive(keep_listening=True,with_ack=True,timeout=5.0)
+        receivedInfo = Rad.receive(keep_listening=False,with_ack=True,timeout=5.0)
         return(receivedInfo)
 
     #In the event of loss of contact, this function will run through all possible fixes

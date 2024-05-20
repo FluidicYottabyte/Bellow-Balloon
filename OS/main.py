@@ -22,9 +22,9 @@ def RadioControlSend():
     move = True
     while move:
         print("Acting radio...")
-        success = Radio.send()
-        if not success:
-            move = False
+        success = Radio.receive()
+        if success:
+            print(success)
 
 
 thread1 = threading.Thread(target=RadioControlSend)
