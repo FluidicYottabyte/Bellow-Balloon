@@ -64,27 +64,42 @@ class Radio:
             Rad.spreading_factor = 6
             print("Valid bandwidth:"+str(Rad.bw_bins))
             if Balloon:
-                Rad.node = 66
-                Rad.destination = 65
+                Rad.node = 1
+                Rad.destination = 2
             else:
-                Rad.node = 65
-                Rad.destination = 66
+                Rad.node = 2
+                Rad.destination = 1
             
             print(f"Node: {Rad.node}")
             print(f"Destination: {Rad.destination}")
         self.counter = 0
         
-    def split_bytes(self,data: bytes, chunk_size: int = 252) -> list:
+    def split_string_to_byte_chunks(self, s: str, byte_limit: int = 200) -> list:
         """
-        Splits the input bytes object into a list of bytes objects, each with a maximum size of chunk_size.
+        Splits the input string into chunks such that when each chunk is encoded to bytes,
+        it does not exceed the byte limit.
 
-        :param data: The input bytes object to be split.
-        :param chunk_size: The size of each chunk. Default is 252.
-        :return: A list of bytes objects.
+        :param s: The input string to be split.
+        :param byte_limit: The maximum byte size for each chunk when encoded to bytes. Default is 252.
+        :return: A list of string chunks.
         """
         chunks = []
-        for i in range(0, len(data), chunk_size):
-            chunks.append(data[i:i+chunk_size])
+        current_chunk = []
+        current_chunk_byte_size = 0
+
+        for char in s:
+            char_byte_size = len(char.encode('utf-8'))
+            if current_chunk_byte_size + char_byte_size > byte_limit:
+                chunks.append(''.join(current_chunk))
+                current_chunk = [char]
+                current_chunk_byte_size = char_byte_size
+            else:
+                current_chunk.append(char)
+                current_chunk_byte_size += char_byte_size
+
+        if current_chunk:
+            chunks.append(''.join(current_chunk))
+
         return chunks
         
     def test(self):
@@ -120,10 +135,13 @@ class Radio:
     def send(self):
         if not (outgoing.empty()):
             actualObject = outgoing.get()
-            bytesObject = bytes(actualObject.format(self.counter,Rad.node), 'UTF-8')
-            for i, chunk in enumerate(self.split_bytes(bytesObject)):
+            listedObj = self.split_string_to_byte_chunks(actualObject)
+            
+            for i, chunk in enumerate(listedObj):
                 print(chunk)
-                Rad.send(chunk)
+                bytesObject = bytes(chunk.format(self.counter,Rad.node),"UTF-8")
+                print(f"Sending raw: {bytesObject}")
+                Rad.send(bytesObject)
                 self.counter = self.counter + 1
 
     def receive(self):
