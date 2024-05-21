@@ -27,7 +27,6 @@ def RadioReceive():
     print("Radio control thread initialized")
     move = True
     while move:
-        print("Acting radio...")
         success = Radio.receive()
         print(success)
 

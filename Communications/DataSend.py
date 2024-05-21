@@ -69,6 +69,7 @@ class Radio:
             else:
                 Rad.node = 65
                 Rad.destination = 66
+        self.counter = 0
         
     def split_bytes(self,data: bytes, chunk_size: int = 252) -> list:
         """
@@ -115,11 +116,12 @@ class Radio:
         
     def send(self):
         if not (outgoing.empty()):
-            bytesObject = bytes(outgoing.get().format(counter,Rad.node))
+            actualObject = outgoing.get()
+            bytesObject = bytes(actualObject.format(self.counter,Rad.node), 'UTF-8')
             for i, chunk in enumerate(self.split_bytes(bytesObject)):
                 print(chunk)
                 Rad.send(chunk)
-                counter = counter + 1
+                self.counter = self.counter + 1
 
     def receive(self):
         packet = Rad.receive(with_header=True)

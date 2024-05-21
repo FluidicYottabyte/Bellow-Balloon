@@ -21,7 +21,6 @@ def RadioControlSend():
     print("Radio control thread initialized")
     move = True
     while move:
-        print("Acting radio...")
         success = Radio.send()
         if success:
             print(success)
