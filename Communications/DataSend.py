@@ -44,6 +44,7 @@ if os.path.dirname(os.path.dirname(os.path.dirname(path))) == "/home":
     onPi = True
 
 outgoing = PriorityQueue()
+images = PriorityQueue()
 
 from queue import PriorityQueue
 # Import the SSD1306 module.
@@ -67,20 +68,36 @@ class Radio:
                 Rad.node = 65
                 Rad.destination = 66
         
+    def split_bytes(self,data: bytes, chunk_size: int = 252) -> list:
+        """
+        Splits the input bytes object into a list of bytes objects, each with a maximum size of chunk_size.
+
+        :param data: The input bytes object to be split.
+        :param chunk_size: The size of each chunk. Default is 252.
+        :return: A list of bytes objects.
+        """
+        chunks = []
+        for i in range(0, len(data), chunk_size):
+            chunks.append(data[i:i+chunk_size])
+        return chunks
+        
     def test(self):
         return(Rad.send_with_ack(b"TEST"))
         
     def getQueue(self):
         return(outgoing)
     
+    def addQueueImage(self,priority,object):
+        images.put(object,priority)
+        
     def addQueue(self,priority,object):
         outgoing.put(object,priority)
         
-    def send(self):
-        SizeStat = not (outgoing.empty())
+    def sendImg(self):
+        SizeStat = not (images.empty())
         print(SizeStat)
         if SizeStat:
-            CurrTask = outgoing.get()
+            CurrTask = images.get()
             print(CurrTask)
             path = os.getcwd()
             path = os.path.dirname(path)
@@ -89,12 +106,18 @@ class Radio:
                 f = image.read()
                 b = bytearray(f)
                 print(b)
+                #add send fuction
             return True
         else:
             return False
+        
+    def send():
+        if not (outgoing.empty()):
+            for i, chunk in enumerate(self.split_bytes(outgoing.get())):
+                Rad.send(chunk)
 
     def receive(self):
-        receivedInfo = Rad.receive(keep_listening=False,with_ack=True,timeout=5.0)
+        receivedInfo = Rad.receive(with_header=True)
         return(receivedInfo)
 
     #In the event of loss of contact, this function will run through all possible fixes

@@ -15,7 +15,7 @@ from Communications import DataSend
 Radio = DataSend.Radio(True)
 
 Radio.getQueue()
-Radio.addQueue(1,"TestIMG1.jpg")
+Radio.addQueue(1,"ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 def RadioControlSend():
     print("Radio control thread initialized")
