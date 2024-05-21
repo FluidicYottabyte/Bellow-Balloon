@@ -42,6 +42,8 @@ if os.path.dirname(os.path.dirname(os.path.dirname(path))) == "/home":
     
     Rad.auto_agc = True
     onPi = True
+    
+counter = 0
 
 outgoing = PriorityQueue()
 images = PriorityQueue()
@@ -111,14 +113,23 @@ class Radio:
         else:
             return False
         
-    def send():
+    def send(self):
         if not (outgoing.empty()):
-            for i, chunk in enumerate(self.split_bytes(outgoing.get())):
+            bytesObject = bytes(outgoing.get().format(counter,Rad.node))
+            for i, chunk in enumerate(self.split_bytes(bytesObject)):
+                print(chunk)
                 Rad.send(chunk)
+                counter = counter + 1
 
     def receive(self):
-        receivedInfo = Rad.receive(with_header=True)
-        return(receivedInfo)
+        packet = Rad.receive(with_header=True)
+        if packet is not None:
+            print("Received (raw header):", [hex(x) for x in packet[0:4]])
+            print("Received (raw payload): {0}".format(packet[4:]))
+            print("Received RSSI: {0}".format(Rad.last_rssi))
+            return(format(packet[4:]))
+        else:
+            return(None)
 
     #In the event of loss of contact, this function will run through all possible fixes
     
