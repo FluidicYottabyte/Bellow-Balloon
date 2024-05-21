@@ -34,6 +34,7 @@ if os.path.dirname(os.path.dirname(os.path.dirname(path))) == "/home":
     spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
     Rad = adafruit_rfm9x.RFM9x(spi, CS, RESET, 915.0)
 
+    Rad.enable_crc = True
     Rad.tx_power = 23
     Rad.ack_wait = 1
     Rad.ack_retries = 2
