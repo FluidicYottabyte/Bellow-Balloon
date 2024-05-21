@@ -37,7 +37,7 @@ if os.path.dirname(os.path.dirname(os.path.dirname(path))) == "/home":
     Rad.enable_crc = True
     Rad.tx_power = 23
     
-    Rad.auto_agc = True
+    #Rad.auto_agc = True
     onPi = True
     
 counter = 0
