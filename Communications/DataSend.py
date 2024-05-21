@@ -69,6 +69,9 @@ class Radio:
             else:
                 Rad.node = 65
                 Rad.destination = 66
+            
+            print(f"Node: {Rad.node}")
+            print(f"Destination: {Rad.destination}")
         self.counter = 0
         
     def split_bytes(self,data: bytes, chunk_size: int = 252) -> list:
