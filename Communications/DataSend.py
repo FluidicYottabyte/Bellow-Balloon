@@ -18,26 +18,23 @@ print(os.path.dirname(os.path.dirname(os.path.dirname(path))))
 
 #checks if it is on pi or not. Remove completely on launch
 
-onPi = False
 
-if os.path.dirname(os.path.dirname(os.path.dirname(path))) == "/home":
-    print("on Pi")
-    import busio
-    from digitalio import DigitalInOut, Direction, Pull
-    import board
+import busio
+from digitalio import DigitalInOut, Direction, Pull
+import board
 
-    import adafruit_rfm9x
+import adafruit_rfm9x
 
-    # Configure RFM9x LoRa Radio
-    CS = DigitalInOut(board.CE1)
-    RESET = DigitalInOut(board.D25)
-    spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
-    Rad = adafruit_rfm9x.RFM9x(spi, CS, RESET, 915.0)
+# Configure RFM9x LoRa Radio
+CS = DigitalInOut(board.CE1)
+RESET = DigitalInOut(board.D25)
+spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
+Rad = adafruit_rfm9x.RFM9x(spi, CS, RESET, 915.0)
 
-    Rad.tx_power = 23
-    
-    #Rad.auto_agc = True
-    onPi = True
+Rad.tx_power = 23
+
+#Rad.auto_agc = True
+onPi = True
     
 counter = 0
 
@@ -54,20 +51,9 @@ from queue import PriorityQueue
 class Radio:
     
     def __init__(self, Balloon):
-        if onPi:
-            print("Begin radio object")
-            Rad.reset()
-            Rad.spreading_factor = 6
-            print("Valid bandwidth:"+str(Rad.bw_bins))
-            if Balloon:
-                Rad.node = 1
-                Rad.destination = 2
-            else:
-                Rad.node = 2
-                Rad.destination = 1
-            
-            print(f"Node: {Rad.node}")
-            print(f"Destination: {Rad.destination}")
+        Rad.reset()
+        print("Valid bandwidth:"+str(Rad.bw_bins))
+
         self.counter = 0
         
     def split_string_to_byte_chunks(self, s: str, byte_limit: int = 200) -> list:
@@ -142,6 +128,7 @@ class Radio:
 
     def receive(self):
         packet = Rad.receive()
+        time.sleep(.1)
         if packet is not None:
             print(str(packet,"UTF-8"))
             return(packet)
