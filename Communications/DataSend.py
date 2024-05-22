@@ -116,7 +116,10 @@ class Radio:
         
     def send(self):
         if not (outgoing.empty()):
+            print("Thinks are outgoing")
             actualObject = outgoing.get()
+            Rad.send(bytes("actualObject","UTF-8"))
+            return None
             listedObj = self.split_string_to_byte_chunks(actualObject)
             
             for i, chunk in enumerate(listedObj):

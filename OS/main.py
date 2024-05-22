@@ -15,7 +15,7 @@ from Communications import DataSend
 Radio = DataSend.Radio(True)
 
 Radio.getQueue()
-Radio.addQueue(1,"Startup message {} from node {}")
+Radio.addQueue(1,"FOCUK YOU")
 
 def RadioControlSend():
     print("Radio control thread initialized")
