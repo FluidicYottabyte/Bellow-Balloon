@@ -1,14 +1,8 @@
-from picamera2 import Picamera2
-import os
-
-path = os.getcwd()
-path = os.path.dirname(path)
-
-picam2a = Picamera2(0)
-picam2b = Picamera2(1)
-picam2a.start()
-picam2b.start()
-picam2a.capture_file("cam0.jpg")
-picam2b.capture_file("cam1.jpg")
-picam2a.stop()
-picam2b.stop()
+from picamera2 import Picamera2, Preview
+import time
+picam2 = Picamera2()
+camera_config = picam2.create_still_configuration(main={"size": (1920, 1080)}, lores={"size": (640, 480)}, display="lores")
+picam2.configure(camera_config)
+picam2.start()
+picam2.capture_file("test.jpg")
+picam2.stop()

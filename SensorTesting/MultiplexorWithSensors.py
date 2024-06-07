@@ -5,6 +5,16 @@
 # Use with other I2C sensors would be similar.
 import time
 import board
+import os
+import sys
+
+path = os.getcwd()
+path = os.path.dirname(path)
+path = os.path.join(path,"SensorTesting")
+sys.path.insert(0, path)
+print(path)
+
+
 from SensorModules import WatPresSens
 from SensorModules import PHTCSens
 from SensorModules import IMUSens
@@ -14,7 +24,8 @@ import adafruit_tca9548a
 
 # Create I2C bus as normal
 i2c = board.I2C()  # uses board.SCL and board.SDA
-i2c3 = board.I2C(board.SCL3,board.SDA3)
+#i2c3 = board.I2C(board.SCL3,board.SDA3)
+#PosSens = IMUSens.IMU(i2c)
 
 """^^^^^^^^^^^^^^FIGURE OUT HOW TO ACCESS I2C-3^^^^^^^^^^^^^"""
 
@@ -25,14 +36,7 @@ tca = adafruit_tca9548a.TCA9548A(i2c)
 
 PresSens = WatPresSens.TPSensor(tca[3])
 EvrySens = PHTCSens.PHTGSensor(tca[2])
-PosSens = IMUSens.IMU(i2c)
 
-# After initial setup, can just use sensors as normal.
-""" while True:
-    print("Pressure: "+str(PresSens.readPres()))
-    print("Temperature: "+str(PresSens.readTemp()))
-    print("Humidity: "+str(EvrySens.readHumid()))
-    time.sleep(0.1) """
 
 # Create a class to read sensor information
 class Multiplexor:
@@ -55,8 +59,5 @@ class Multiplexor:
         else:
             return(False)
         
-    def getAccel(self):
-        return(PosSens.Accel())
-    
-    def gravity(self):
-        return(PosSens.CurGrav())
+    def getHumid(self):
+        return(EvrySens.readHumid())
