@@ -15,7 +15,9 @@ print(path)
 
 from Communications import DataSend
 from SensorTesting import MultiplexorWithSensors
+from SensorTesting import GPS as GPSHold
 
+Gps = GPSHold.GPSUnit("/dev/ttyS0")
 Sensors = MultiplexorWithSensors.Multiplexor()
 Radio = DataSend.Radio(True)
 
@@ -26,10 +28,13 @@ Radio.addQueue(1,"FOCUK YOU")
         
 def get_sensor_data():
     try:
-        temperature = Sensors.avgTemp()  # Simulate temperature
-        pressure = Sensors.readPres()  # Simulate pressure
-        humidity = Sensors.getHumid()  # Simulate humidity
-        gps_coords = (random.uniform(-90, 90), random.uniform(-180, 180), random.uniform(0, 10000))  # Simulate GPS coordinates
+        temperature = Sensors.avgTemp()
+        pressure = Sensors.readPres()
+        humidity = Sensors.getHumid()
+        gps_coords = Gps.getLocation()
+        
+        datetime.datetime
+        
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         return timestamp, temperature, pressure, humidity, gps_coords
     except Exception as e:
@@ -45,7 +50,9 @@ def RadioControlSend():
     print("Radio control thread initialized")
     move = True
     while move:
+        input("Press enter to send test packet.")
         Radio.send()
+        print("Packet sent.")
 
 
 
