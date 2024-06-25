@@ -5,6 +5,7 @@ import time
 import csv
 import os
 import random
+import pytz
 from datetime import datetime
 
 path = os.getcwd()
@@ -33,13 +34,22 @@ def get_sensor_data():
         humidity = Sensors.getHumid()
         gps_coords = Gps.getLocation()
         
-        datetime.datetime
+        GPSTime = Gps.getExactTime()
         
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        #This is all to convert to UTC to PST because of GPS
+        Faketz = pytz.utc
+        Realtz = pytz.timezone("America/Los_Angeles")
+        
+        TrueTime = datetime(GPSTime[0],GPSTime[1],GPSTime[2], hour = GPSTime[3], minute = GPSTime[4], second = GPSTime[5])
+        FakeTime = Faketz.localize(TrueTime)
+        RealTime = FakeTime.astimezone(Realtz)
+        
+        timestamp = RealTime.strftime("%Y-%m-%d %H:%M:%S")
+        
         return timestamp, temperature, pressure, humidity, gps_coords
     except Exception as e:
         print(f"Error reading sensor data: {e}")
-        return None
+        return (None,e)
 
 
 
@@ -74,7 +84,7 @@ def WeatherLog():
     
     # Get the current data file path
     def get_current_file_path():
-        timestamp = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+        timestamp = get_sensor_data()[0]
         return os.path.join(data_dir, f"{file_prefix}_{timestamp}{file_extension}")
 
     # Function to write data to file with error correction
@@ -104,7 +114,10 @@ def WeatherLog():
         global current_file_path
         data = get_sensor_data()
         print(data)
-        if data:
+        if data[0] == None:
+            write_data_to_file(current_file_path, f"ERROR: {data[1]}")
+            current_file_path = rotate_file(current_file_path)
+        else:
             write_data_to_file(current_file_path, data)
             current_file_path = rotate_file(current_file_path)
             
