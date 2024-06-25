@@ -201,27 +201,28 @@ def run():
     
     try:
         
+        #set the systems time to the current GPS time
+        
         truetime = Gps.getExactTime()
         
-        
-        
-        
-        set_string = str(truetime[0]) + "-" + str(truetime[1]) +"-" + str(truetime[2]) + " " + str(truetime[3]) + ":" + str(truetime[4]) + ":" + str(truetime[5])
-
-
-        sudodate = subprocess.Popen(["sudo", "date", "-s", set_string])
-        sudodate.communicate()
-        
-        
-        truetime = datetime.now()
+        TrueTime = datetime(truetime[0],truetime[1],truetime[2], hour = truetime[3], minute = truetime[4], second = truetime[5])
         
         Faketz = pytz.utc
         Realtz = pytz.timezone("America/Los_Angeles")
         
-        FakeTime = Faketz.localize(truetime)
+        FakeTime = Faketz.localize(TrueTime)
         RealTime = FakeTime.astimezone(Realtz)
         
         print(f"Current system time is: {RealTime}")
+        
+        
+        set_string = RealTime.strftime("%Y-%m-%d %H:%M:%S")
+
+
+        sudodate = subprocess.Popen(["sudo", "date", "-s", set_string])
+        sudodate.communicate()
+                
+        
 
         thread1 = threading.Thread(target=RadioControlSend)
         #thread1.start()
