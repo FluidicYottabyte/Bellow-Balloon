@@ -1,0 +1,2 @@
+Timestamp,Temperature (C),Pressure (hPa),Humidity (%),"(Latitude, Longitude, Altitude (m))","Gravity Vector (m/s^2 , xyz)","Acceleration w/o-grav. Vector (m/s^2 , xyz)","Orientation (Euler angles, xyz)"
+ERROR: cannot access local variable 'timestamp' where it is not associated with a value

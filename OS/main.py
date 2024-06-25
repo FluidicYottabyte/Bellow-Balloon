@@ -7,6 +7,7 @@ import os
 import random
 import pytz
 from datetime import datetime
+import subprocess
 
 path = os.getcwd()
 path = os.path.dirname(path)
@@ -22,32 +23,94 @@ Gps = GPSHold.GPSUnit("/dev/ttyS0")
 Sensors = MultiplexorWithSensors.Multiplexor()
 Radio = DataSend.Radio(True)
 
-Radio.getQueue()
-Radio.addQueue(1,"FOCUK YOU")
 
 
-        
+  
 def get_sensor_data():
+    
+    global OnSystemTime
+    
     try:
-        temperature = Sensors.avgTemp()
-        pressure = Sensors.readPres()
-        humidity = Sensors.getHumid()
-        gps_coords = Gps.getLocation()
-        gravity = Sensors.getGravity()
-        acceleration = Sensors.getAccel()
-        orientation = Sensors.getOrientation()
         
-        GPSTime = Gps.getExactTime()
+        #trying every value so logging functionality is upheld
+        dataErrors = 0
+        try:
+            temperature = Sensors.avgTemp()
+        except Exception as e:
+            temperature = f"Error: {str(e)}"
+            dataErrors +=1
+
+        try:
+            pressure = Sensors.readPres()
+        except Exception as e:
+            pressure = f"Error: {str(e)}"
+            dataErrors +=1
+
+        try:
+            humidity = Sensors.getHumid()
+        except Exception as e:
+            humidity = f"Error: {str(e)}"
+            dataErrors +=1
+
+        try:
+            gps_coords = Gps.getLocation()
+        except Exception as e:
+            gps_coords = f"Error: {str(e)}"
+            dataErrors +=1
+
+        try:
+            gravity = Sensors.getGravity()
+        except Exception as e:
+            gravity = f"Error: {str(e)}"
+            dataErrors +=1
+
+        try:
+            acceleration = Sensors.getAccel()
+        except Exception as e:
+            acceleration = f"Error: {str(e)}"
+            dataErrors +=1
+
+        try:
+            orientation = Sensors.getOrientation()
+        except Exception as e:
+            orientation = f"Error: {str(e)}"
+            dataErrors +=1
+
+        print(f"Completed data collection with {dataErrors} error(s)")
+            
+            
+            
+        try:
+            GPSTime = Gps.getExactTime()
+            if OnSystemTime:
+                OnSystemTime = False
+                return(None," - TIME ERROR RESOLVED, SWITCHING BACK TO PRIMARY (GPS) TIME SYSTEM")
+        except Exception as e:
+            if not OnSystemTime:
+                print("FATAL ERROR REGARDING TIME DATA - SWITCHING TO SECONDARY SYSTEM")
+            
+                OnSystemTime = True
+            
+                return (None,f" - TIME SYSTEM ERROR; GPS LIKELY LOST. SWITCHING TO SECONDARY TIME SYSTEM (PI-TIME) UNTIL RESOLVED: {e}")
+            
+            else:
+                GPSTime = datetime.now()
         
         #This is all to convert to UTC to PST because of GPS
         Faketz = pytz.utc
         Realtz = pytz.timezone("America/Los_Angeles")
         
-        TrueTime = datetime(GPSTime[0],GPSTime[1],GPSTime[2], hour = GPSTime[3], minute = GPSTime[4], second = GPSTime[5])
-        FakeTime = Faketz.localize(TrueTime)
-        RealTime = FakeTime.astimezone(Realtz)
+        timestamp = None
         
-        timestamp = RealTime.strftime("%Y-%m-%d %H:%M:%S")
+        if isinstance(GPSTime,datetime):
+            timestamp = GPSTime.strftime("%Y-%m-%d %H:%M:%S")
+        else:
+            TrueTime = datetime(GPSTime[0],GPSTime[1],GPSTime[2], hour = GPSTime[3], minute = GPSTime[4], second = GPSTime[5])
+            FakeTime = Faketz.localize(TrueTime)
+            RealTime = FakeTime.astimezone(Realtz)
+            timestamp = RealTime.strftime("%Y-%m-%d %H:%M:%S")
+        
+        
         
         return timestamp, temperature, pressure, humidity, gps_coords, gravity, acceleration, orientation
     except Exception as e:
@@ -74,6 +137,10 @@ def RadioControlSend():
 Thread 2
 """
 def WeatherLog():
+    
+    global OnSystemTime
+    OnSystemTime = False
+    
     
     # Directory to store data files
     data_dir = "Log"
@@ -128,12 +195,45 @@ def WeatherLog():
         log_data()
         time.sleep(1)
 
-thread1 = threading.Thread(target=RadioControlSend)
-#thread1.start()
 
-thread2 = threading.Thread(target=WeatherLog)
-thread2.start()
-"""
-thread3 = threading.Thread(target=)
-thread4 = threading.Thread(target=)"""
+#Beginning of program
+def run():
+    
+    try:
+        
+        truetime = Gps.getExactTime()
+        
+        
+        
+        
+        set_string = str(truetime[0]) + "-" + str(truetime[1]) +"-" + str(truetime[2]) + " " + str(truetime[3]) + ":" + str(truetime[4]) + ":" + str(truetime[5])
 
+
+        sudodate = subprocess.Popen(["sudo", "date", "-s", set_string])
+        sudodate.communicate()
+        
+        
+        truetime = datetime.now()
+        
+        Faketz = pytz.utc
+        Realtz = pytz.timezone("America/Los_Angeles")
+        
+        FakeTime = Faketz.localize(truetime)
+        RealTime = FakeTime.astimezone(Realtz)
+        
+        print(f"Current system time is: {RealTime}")
+
+        thread1 = threading.Thread(target=RadioControlSend)
+        #thread1.start()
+
+        thread2 = threading.Thread(target=WeatherLog)
+        thread2.start()
+        """
+        thread3 = threading.Thread(target=)
+        thread4 = threading.Thread(target=)"""
+
+    finally:
+        print("-END FLIGHT-")
+    
+if __name__ == '__main__':
+  run()
