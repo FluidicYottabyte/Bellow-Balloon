@@ -1,0 +1,5 @@
+# exclude everything
+OS/Logs/*
+
+# exception to the rule
+!OS/Logs/.gitkeep 
