@@ -25,7 +25,7 @@ import adafruit_tca9548a
 # Create I2C bus as normal
 i2c = board.I2C()  # uses board.SCL and board.SDA
 #i2c3 = board.I2C(board.SCL3,board.SDA3)
-#PosSens = IMUSens.IMU(i2c)
+PosSens = IMUSens.IMU(i2c)
 
 """^^^^^^^^^^^^^^FIGURE OUT HOW TO ACCESS I2C-3^^^^^^^^^^^^^"""
 
@@ -44,8 +44,6 @@ class Multiplexor:
     def __init__(self):
         print("Multiplexor called.")
 
-        self.tca = adafruit_tca9548a.TCA9548A(i2c)
-
     def avgTemp(self):
         avg = (PresSens.readTemp() + EvrySens.readTemp()) / 2
         return(avg)
@@ -58,6 +56,15 @@ class Multiplexor:
             return(True)
         else:
             return(False)
-        
+    
+    def getGravity(self):
+        return(PosSens.CurGrav())
+    
+    def getAccel(self):
+        return(PosSens.Accel())
+    
+    def getOrientation(self):
+        return(PosSens.Orientation())
+    
     def getHumid(self):
         return(EvrySens.readHumid())

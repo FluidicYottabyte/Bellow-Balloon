@@ -33,6 +33,9 @@ def get_sensor_data():
         pressure = Sensors.readPres()
         humidity = Sensors.getHumid()
         gps_coords = Gps.getLocation()
+        gravity = Sensors.getGravity()
+        acceleration = Sensors.getAccel()
+        orientation = Sensors.getOrientation()
         
         GPSTime = Gps.getExactTime()
         
@@ -46,7 +49,7 @@ def get_sensor_data():
         
         timestamp = RealTime.strftime("%Y-%m-%d %H:%M:%S")
         
-        return timestamp, temperature, pressure, humidity, gps_coords
+        return timestamp, temperature, pressure, humidity, gps_coords, gravity, acceleration, orientation
     except Exception as e:
         print(f"Error reading sensor data: {e}")
         return (None,e)
@@ -107,7 +110,7 @@ def WeatherLog():
     current_file_path = get_current_file_path()
     with open(current_file_path, mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(["Timestamp", "Temperature (C)", "Pressure (hPa)", "Humidity (%)", "Latitude", "Longitude", "Altitude (m)"])
+        writer.writerow(["Timestamp", "Temperature (C)", "Pressure (hPa)", "Humidity (%)", "(Latitude, Longitude, Altitude (m))","Gravity Vector (m/s^2 , xyz)","Acceleration w/o-grav. Vector (m/s^2 , xyz)","Orientation (Euler angles, xyz)"])
 
     # Function to log data with rotation and error correction
     def log_data():
@@ -115,7 +118,7 @@ def WeatherLog():
         data = get_sensor_data()
         print(data)
         if data[0] == None:
-            write_data_to_file(current_file_path, f"ERROR: {data[1]}")
+            write_data_to_file(current_file_path, [f"ERROR: {data[1]}"])
             current_file_path = rotate_file(current_file_path)
         else:
             write_data_to_file(current_file_path, data)
